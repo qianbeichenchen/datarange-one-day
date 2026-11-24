@@ -1,8 +1,8 @@
 # SpreadJS DataRange 课堂
 
-17 个独立示例，从读取和编辑数据，到用同一份任务数据做看板、日历与甘特图。左侧目录按六个主题组织，课号、网址和 JavaScript 文件编号一致。
+17 节课从读取和编辑数据开始，逐步做到分组汇总、卡片、看板、日历和甘特图。左侧目录按 6 个主题分组，主题下列出课程，当前课目用绿色标记。课号对应本地网址的 `?step=` 参数和 JavaScript 文件编号。
 
-## 运行
+## 本地运行
 
 需要 Node.js（建议 22 或更新版本）。在本目录执行以下命令：
 
@@ -15,24 +15,48 @@ npm start
 
 依赖固定为 SpreadJS 核心包 19.2.3。需要配置授权时，将 `public/license.example.js` 复制为 `public/license.js` 并在本机填入许可。该文件由 Git 忽略。示例直接使用 JavaScript 数据，服务监听本机 `127.0.0.1:5186`。
 
-| 主题 | 课程 | 学习重点 |
-| --- | --- | --- |
-| 数据读写与区域 | [01 只读数据](./public/01-read.js)、[02 编辑回写](./public/02-edit.js)、[03 基础报价表](./public/03-quote.js) | 两套坐标、读写、样式、调整与重绘区域 |
-| 视图映射与汇总 | [04 订单视图与撤销](./public/04-orders.js)、[05 分组报表与联动](./public/05-groups.js)、[06 项目工时树](./public/06-tree.js) | 排序与筛选后的行索引、原生历史、分组和树形汇总 |
-| 字段、单元格与卡片 | [07 多单元格卡片](./public/07-cards.js)、[08 动态字段](./public/08-fields.js)、[09 自定义绘制与单格卡片](./public/09-cell-paint.js)、[10 自定义日期编辑器](./public/10-cell-editor.js) | 二维映射、列映射、单元格绘制与编辑 |
-| 表格业务交互 | [11 行内新增](./public/11-inline-add.js)、[12 组合筛选](./public/12-filter-rules.js) | 草稿生命周期、条件树、按记录写回 |
-| 看板与多视图 | [13 看板布局](./public/13-board.js)、[14 多视图共享数据](./public/14-multi-view.js)、[15 看板拖拽](./public/15-board-drag.js) | 分组卡片、视图配置、拖放更新字段 |
-| 日期与时间轴 | [16 日历与拖动改期](./public/16-calendar.js)、[17 甘特时间轴](./public/17-gantt.js) | 日期和行列互转、拖动改期、移动和拉伸任务条 |
+## 课程目录
 
-第 01～07 课可对照 [核心用法教程](./docs/01-03-core.md)、[视图与汇总教程](./docs/04-06-views.md) 和 [多单元格卡片教程](./docs/07-cards.md)。
+| 主题 | 打开课程 | 主要操作 | 源码 |
+| --- | --- | --- | --- |
+| 数据读写与区域 | [01 只读数据](http://localhost:5186/?step=1) | 读取二维数组，从工作表坐标换算到 DataRange 内部坐标。 | [`01-read.js`](./public/01-read.js) |
+|  | [02 编辑回写](http://localhost:5186/?step=2) | 编辑单元格，将合法输入写回对象字段。 | [`02-edit.js`](./public/02-edit.js) |
+|  | [03 基础报价表](http://localhost:5186/?step=3) | 计算金额、设置高亮、增删商品、移动区域。 | [`03-quote.js`](./public/03-quote.js) |
+| 视图映射与汇总 | [04 订单视图与撤销](http://localhost:5186/?step=4) | 按商品和地区筛选、按金额排序，编辑正确的记录并撤销或重做。 | [`04-orders.js`](./public/04-orders.js) |
+|  | [05 分组报表与联动](http://localhost:5186/?step=5) | 按地区和品类分组，查看小计、合计和联动汇总。 | [`05-groups.js`](./public/05-groups.js) |
+|  | [06 项目工时树](http://localhost:5186/?step=6) | 展开或折叠任务树，编辑叶子工时并观察父级汇总。 | [`06-tree.js`](./public/06-tree.js) |
+| 字段、单元格与卡片 | [07 多单元格卡片](http://localhost:5186/?step=7) | 用多个可编辑单元格组成一张卡片，切换每行两张或三张。 | [`07-cards.js`](./public/07-cards.js) |
+|  | [08 动态字段](http://localhost:5186/?step=8) | 隐藏负责人或交换列顺序，再编辑验证按字段 ID 回写。 | [`08-fields.js`](./public/08-fields.js) |
+|  | [09 自定义绘制与单格卡片](http://localhost:5186/?step=9) | 在状态标签和整格卡片间切换，点击卡片查看详情。 | [`09-cell-paint.js`](./public/09-cell-paint.js) |
+|  | [10 自定义日期编辑器](http://localhost:5186/?step=10) | 用日期控件编辑截止日期，再用原生历史撤销和重做。 | [`10-cell-editor.js`](./public/10-cell-editor.js) |
+| 表格业务交互 | [11 行内新增](http://localhost:5186/?step=11) | 创建草稿，输入标题正式新增，或按 Escape 取消。 | [`11-inline-add.js`](./public/11-inline-add.js) |
+|  | [12 组合筛选](http://localhost:5186/?step=12) | 组合 AND 和 OR 条件，筛选后编辑并核对源记录。 | [`12-filter-rules.js`](./public/12-filter-rules.js) |
+| 看板与多视图 | [13 看板布局](http://localhost:5186/?step=13) | 按状态分列，查看卡片详情，并在选定状态下新增任务。 | [`13-board.js`](./public/13-board.js) |
+|  | [14 多视图共享数据](http://localhost:5186/?step=14) | 在表格修改任务状态并在看板查看，分别保存各视图的筛选设置。 | [`14-multi-view.js`](./public/14-multi-view.js) |
+|  | [15 看板拖拽](http://localhost:5186/?step=15) | 跨列拖放卡片，按目标列更新任务状态。 | [`15-board-drag.js`](./public/15-board-drag.js) |
+| 日期与时间轴 | [16 日历与拖动改期](http://localhost:5186/?step=16) | 翻月、查看同日多条任务，开启拖放后更新截止日期。 | [`16-calendar.js`](./public/16-calendar.js) |
+|  | [17 甘特时间轴](http://localhost:5186/?step=17) | 查看任务条、整体移动保留工期、拉伸端点调整起止日期。 | [`17-gantt.js`](./public/17-gantt.js) |
 
-课程页面和编号源码放在 `public/`，教程及配图放在 `docs/`，业务模型测试放在 `tests/`。从项目根目录运行 `npm start`。
+分课教程：[01～03 核心用法](./docs/01-03-core.md)、[04～06 视图与汇总](./docs/04-06-views.md)、[07 多单元格卡片](./docs/07-cards.md)。第 08～17 课的操作步骤见下文。
 
-所有课程的初始样例集中在 [`public/demo-data.js`](./public/demo-data.js)。第 01～03 课取前三笔订单的商品字段，第 04、05、07 课使用完整订单，第 06 课使用工时树，第 08～17 课使用六条任务。每课打开时都会创建自己的数据副本。
+## 样例数据与项目目录
+
+初始样例集中在 [`public/demo-data.js`](./public/demo-data.js)。以下数字是每课刚打开时的样例数量，筛选、折叠和新增会改变实际显示的条目数。
+
+| 课程 | 初始数据 |
+| --- | --- |
+| 01～03 | 3 件商品，取自订单样例的前三笔 |
+| 04、05、07 | 8 笔订单 |
+| 06 | 12 个工时树节点，含父任务与叶子任务 |
+| 08～17 | 6 条任务，含状态、负责人、优先级和起止日期 |
+
+切换课程或刷新页面会重新创建样例。第 14 课内部切换表格和看板时，两个视图共享同一份任务记录，各自保留筛选设置。
+
+页面和课程源码在 `public/`，分课教程和配图在 `docs/`，业务模型测试在 `tests/`。根目录的 `package.json` 管理启动命令和依赖。`public/package.json` 为 Node.js 读取课程源码声明 ES 模块格式。
 
 ## 第 08～17 课操作教程
 
-第 08～17 课各自调用 `createTasks()` 获得一份六条任务的初始数据。读这些课时，先找到 Provider 的 `getValue`，沿行列坐标找到任务、字段或日期，再观察一次操作如何改变对应数据。
+读这些课时，先找到 Provider 的 `getValue`，沿行列坐标找到任务、字段或日期，再观察一次操作如何改变对应数据。
 
 ### 08 动态字段
 
@@ -100,6 +124,12 @@ npm start
 
 ## 验证
 
-已用 Chrome 打开全部 17 个入口并检查旧进阶入口跳转。实际验证了第 08～17 课的代表操作，包括原生撤销重做、草稿提交和取消、筛选后回写、视图间同步、拖放改期和任务条拉伸。前七课的业务模型测试共六项通过，可用 `node --test tests/business-model.test.mjs` 重跑。
+已在 Chrome 检查全部 17 个课程入口、当前课目高亮和导航滚动。浏览器验证覆盖自定义卡片绘制、看板拖拽、日历改期和甘特图移动等操作。
+
+运行下面的命令可检查订单排序、分组汇总、树形汇总、卡片坐标和输入校验。这 6 项是业务模型测试，覆盖范围见[测试源码](./tests/business-model.test.mjs)。
+
+```powershell
+node --test tests/business-model.test.mjs
+```
 
 参考 [官方 DataRange 指南](https://demo.grapecity.com.cn/spreadjs/help/docs/features/core-concept/worksheet/worksheet-data-range) 和 [多维表格源码](https://github.com/qianbeichenchen/feishu-datarange-demo)。本课程的 GitHub 仓库为 [datarange-one-day](https://github.com/qianbeichenchen/datarange-one-day)。

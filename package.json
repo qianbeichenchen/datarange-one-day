@@ -2,7 +2,7 @@
   "name": "spreadjs-datarange-one-day",
   "version": "1.0.0",
   "private": true,
-  "description": "用三个循序渐进的商品报价表示例学习 DataRange",
+  "description": "从数据读写到看板、日历与甘特图的 SpreadJS DataRange 课堂",
   "scripts": { "start": "node server.js", "dev": "node server.js" },
   "dependencies": { "@grapecity-software/spread-sheets": "19.2.3" }
 }
