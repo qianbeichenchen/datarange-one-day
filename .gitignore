@@ -1,6 +1,7 @@
 node_modules/
 .npm-cache/
 .tools/
+/.local/verification/
 .env
 .env.*
 !.env.example
