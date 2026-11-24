@@ -38,6 +38,8 @@ function paintStatus(ctx, value, x, y, maxWidth) {
   ctx.fillStyle = background;
   ctx.fill();
   ctx.fillStyle = foreground;
+  // x + 10 是标签的左侧留白。显式设置对齐，避免沿用工作表的画布状态。
+  ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
   ctx.fillText(value, x + 10, y + 11, width - 16);
 }
@@ -66,6 +68,7 @@ class TaskCardCell extends S.CellTypes.Base {
     ctx.strokeStyle = '#c8d9e4';
     ctx.stroke();
 
+    ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
     ctx.font = 'bold 15px Microsoft YaHei';
     ctx.fillStyle = '#243346';

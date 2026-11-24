@@ -11,10 +11,12 @@ class BoardCell extends S.CellTypes.Base {
     ctx.fillStyle = style.backColor;
     ctx.fillRect(x, y, width - 2, height);
 
+    // 看板按左边距定位文字，所以标题和卡片都从给定 x 向右绘制。
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
     if (value?.kind === 'heading') {
       ctx.fillStyle = TASK_STATUS_COLORS[value.status].foreground;
       ctx.font = 'bold 14px "Microsoft YaHei", sans-serif';
-      ctx.textBaseline = 'middle';
       ctx.fillText(`${value.status}  ·  ${value.count}`, x + 14, y + height / 2, width - 28);
     } else if (value) {
       // value 是一整条任务记录。任务的几个字段都画进同一个单元格。
@@ -25,7 +27,6 @@ class BoardCell extends S.CellTypes.Base {
       ctx.fill();
       ctx.stroke();
 
-      ctx.textBaseline = 'middle';
       ctx.fillStyle = '#243346';
       ctx.font = 'bold 14px "Microsoft YaHei", sans-serif';
       ctx.fillText(value.title, x + 19, y + 25, width - 38);
