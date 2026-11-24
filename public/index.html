@@ -9,30 +9,56 @@
 </head>
 <body>
   <nav class="sidebar" aria-label="课程目录">
-    <strong>DataRange 课堂</strong>
-    <span class="menu-group">数据读写与区域</span>
-    <a href="./?step=1" data-step="1" data-module="01-read" data-controls="basic-controls">01 只读数据</a>
-    <a href="./?step=2" data-step="2" data-module="02-edit" data-controls="basic-controls">02 编辑回写</a>
-    <a href="./?step=3" data-step="3" data-module="03-quote" data-controls="basic-controls">03 基础报价表</a>
-    <span class="menu-group">视图映射与汇总</span>
-    <a href="./?step=4" data-step="4" data-module="04-orders" data-controls="orders-controls">04 订单视图与撤销</a>
-    <a href="./?step=5" data-step="5" data-module="05-groups" data-controls="groups-controls">05 分组报表与联动</a>
-    <a href="./?step=6" data-step="6" data-module="06-tree" data-controls="tree-controls">06 项目工时树</a>
-    <span class="menu-group">字段、单元格与卡片</span>
-    <a href="./?step=7" data-step="7" data-module="07-cards" data-controls="cards-controls">07 多单元格卡片</a>
-    <a href="./?step=8" data-step="8" data-module="08-fields">08 动态字段</a>
-    <a href="./?step=9" data-step="9" data-module="09-cell-paint">09 自定义绘制与单格卡片</a>
-    <a href="./?step=10" data-step="10" data-module="10-cell-editor">10 自定义日期编辑器</a>
-    <span class="menu-group">表格业务交互</span>
-    <a href="./?step=11" data-step="11" data-module="11-inline-add">11 行内新增</a>
-    <a href="./?step=12" data-step="12" data-module="12-filter-rules">12 组合筛选</a>
-    <span class="menu-group">看板与多视图</span>
-    <a href="./?step=13" data-step="13" data-module="13-board">13 看板布局</a>
-    <a href="./?step=14" data-step="14" data-module="14-multi-view">14 多视图共享数据</a>
-    <a href="./?step=15" data-step="15" data-module="15-board-drag">15 看板拖拽</a>
-    <span class="menu-group">日期与时间轴</span>
-    <a href="./?step=16" data-step="16" data-module="16-calendar">16 日历与拖动改期</a>
-    <a href="./?step=17" data-step="17" data-module="17-gantt">17 甘特时间轴</a>
+    <h1 class="sidebar-title">DataRange 课堂</h1>
+    <div class="course-list">
+      <section class="course-group" aria-labelledby="course-group-1">
+        <h2 id="course-group-1">数据读写与区域</h2>
+        <ol role="list">
+          <li><a href="./?step=1" data-step="1" data-module="01-read" data-controls="basic-controls"><span class="course-number">01</span> <span>只读数据</span></a></li>
+          <li><a href="./?step=2" data-step="2" data-module="02-edit" data-controls="basic-controls"><span class="course-number">02</span> <span>编辑回写</span></a></li>
+          <li><a href="./?step=3" data-step="3" data-module="03-quote" data-controls="basic-controls"><span class="course-number">03</span> <span>基础报价表</span></a></li>
+        </ol>
+      </section>
+      <section class="course-group" aria-labelledby="course-group-2">
+        <h2 id="course-group-2">视图映射与汇总</h2>
+        <ol role="list">
+          <li><a href="./?step=4" data-step="4" data-module="04-orders" data-controls="orders-controls"><span class="course-number">04</span> <span>订单视图与撤销</span></a></li>
+          <li><a href="./?step=5" data-step="5" data-module="05-groups" data-controls="groups-controls"><span class="course-number">05</span> <span>分组报表与联动</span></a></li>
+          <li><a href="./?step=6" data-step="6" data-module="06-tree" data-controls="tree-controls"><span class="course-number">06</span> <span>项目工时树</span></a></li>
+        </ol>
+      </section>
+      <section class="course-group" aria-labelledby="course-group-3">
+        <h2 id="course-group-3">字段、单元格与卡片</h2>
+        <ol role="list">
+          <li><a href="./?step=7" data-step="7" data-module="07-cards" data-controls="cards-controls"><span class="course-number">07</span> <span>多单元格卡片</span></a></li>
+          <li><a href="./?step=8" data-step="8" data-module="08-fields"><span class="course-number">08</span> <span>动态字段</span></a></li>
+          <li><a href="./?step=9" data-step="9" data-module="09-cell-paint"><span class="course-number">09</span> <span>自定义绘制与单格卡片</span></a></li>
+          <li><a href="./?step=10" data-step="10" data-module="10-cell-editor"><span class="course-number">10</span> <span>自定义日期编辑器</span></a></li>
+        </ol>
+      </section>
+      <section class="course-group" aria-labelledby="course-group-4">
+        <h2 id="course-group-4">表格业务交互</h2>
+        <ol role="list">
+          <li><a href="./?step=11" data-step="11" data-module="11-inline-add"><span class="course-number">11</span> <span>行内新增</span></a></li>
+          <li><a href="./?step=12" data-step="12" data-module="12-filter-rules"><span class="course-number">12</span> <span>组合筛选</span></a></li>
+        </ol>
+      </section>
+      <section class="course-group" aria-labelledby="course-group-5">
+        <h2 id="course-group-5">看板与多视图</h2>
+        <ol role="list">
+          <li><a href="./?step=13" data-step="13" data-module="13-board"><span class="course-number">13</span> <span>看板布局</span></a></li>
+          <li><a href="./?step=14" data-step="14" data-module="14-multi-view"><span class="course-number">14</span> <span>多视图共享数据</span></a></li>
+          <li><a href="./?step=15" data-step="15" data-module="15-board-drag"><span class="course-number">15</span> <span>看板拖拽</span></a></li>
+        </ol>
+      </section>
+      <section class="course-group" aria-labelledby="course-group-6">
+        <h2 id="course-group-6">日期与时间轴</h2>
+        <ol role="list">
+          <li><a href="./?step=16" data-step="16" data-module="16-calendar"><span class="course-number">16</span> <span>日历与拖动改期</span></a></li>
+          <li><a href="./?step=17" data-step="17" data-module="17-gantt"><span class="course-number">17</span> <span>甘特时间轴</span></a></li>
+        </ol>
+      </section>
+    </div>
   </nav>
   <main>
   <div id="basic-controls" class="lesson-controls" hidden>
