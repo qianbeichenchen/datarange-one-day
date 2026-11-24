@@ -1,4 +1,5 @@
-import { createOrders, orderView, amount, summarize, numericInput } from './business-model.js';
+import { createOrders } from './demo-data.js';
+import { orderView, amount, summarize, numericInput } from './business-model.js';
 
 const S = GC.Spread.Sheets;
 const spread = new S.Workbook(document.getElementById('ss'), {

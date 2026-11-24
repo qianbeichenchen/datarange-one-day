@@ -1,4 +1,4 @@
-import { createTasks, TASK_MONTH, TASK_STATUS_COLORS } from './task-data.js';
+import { createTasks, TASK_MONTH, TASK_STATUS_COLORS } from './demo-data.js';
 import { addMonths, monthGrid } from './task-dates.js';
 
 const tools = document.getElementById('lesson-tools');

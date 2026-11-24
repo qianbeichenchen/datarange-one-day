@@ -1,3 +1,5 @@
+import { createProducts } from './demo-data.js';
+
 // 第一课：先只看 getValue + dataRanges.add。
 const S = GC.Spread.Sheets;
 const spread = new S.Workbook(document.getElementById('ss'), { sheetCount: 1 });
@@ -11,9 +13,7 @@ sheet.setColumnWidth(3, 110);
 // 第 0 行就是我们自己提供的表头，不是 SpreadJS 自动生成的。
 const rows = [
   ['商品', '单价', '数量'],
-  ['键盘', 199, 2],
-  ['鼠标', 89, 3],
-  ['显示器', 1299, 1]
+  ...createProducts().map(({ name, price, qty }) => [name, price, qty])
 ];
 
 const provider = {

@@ -1,4 +1,5 @@
-import { createOrders, amount, numericInput, CARD_ROWS, CARD_COLS, cardCellAt } from './business-model.js';
+import { createOrders } from './demo-data.js';
+import { amount, numericInput, CARD_ROWS, CARD_COLS, cardCellAt } from './business-model.js';
 
 const S = GC.Spread.Sheets;
 const spread = new S.Workbook(document.getElementById('ss'), {

@@ -1,4 +1,4 @@
-import { TASK_STATUSES, TASK_STATUS_COLORS } from './task-data.js';
+import { TASK_STATUSES, TASK_STATUS_COLORS } from './demo-data.js';
 
 const S = GC.Spread.Sheets;
 

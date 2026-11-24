@@ -1,4 +1,5 @@
-import { createTasks, treeProjection, numericInput } from './business-model.js';
+import { createTreeTasks } from './demo-data.js';
+import { treeProjection, numericInput } from './business-model.js';
 
 const S = GC.Spread.Sheets;
 const spread = new S.Workbook(document.getElementById('ss'), {
@@ -10,7 +11,7 @@ sheet.options.isProtected = true;
 sheet.defaults.rowHeight = 32;
 [320, 100, 115, 115, 110, 120].forEach((width, col) => sheet.setColumnWidth(col + 1, width));
 
-const nodes = createTasks();
+const nodes = createTreeTasks();
 const collapsed = new Set(); // 只记录稳定节点 ID，不记录“第几行被折叠”。
 let tree = treeProjection(nodes, collapsed);
 const headers = ['任务（双击父任务展开/折叠）', '负责人', '计划 / 人天', '实际 / 人天', '偏差 / 人天', '工时消耗率'];

@@ -1,4 +1,4 @@
-import { createTasks, TASK_STATUSES, TASK_OWNERS } from './task-data.js';
+import { createTasks, TASK_STATUSES, TASK_OWNERS } from './demo-data.js';
 
 const controls = document.getElementById('lesson-tools');
 controls.innerHTML = `

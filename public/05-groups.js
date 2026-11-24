@@ -1,4 +1,5 @@
-import { createOrders, groupReport, amount, numericInput, roundMoney } from './business-model.js';
+import { createOrders } from './demo-data.js';
+import { groupReport, amount, numericInput, roundMoney } from './business-model.js';
 
 const S = GC.Spread.Sheets;
 const spread = new S.Workbook(document.getElementById('ss'), {

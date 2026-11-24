@@ -1,3 +1,5 @@
+import { createProducts } from './demo-data.js';
+
 // 第二课：对象数组 + 字段映射 + setValue。
 const S = GC.Spread.Sheets;
 const spread = new S.Workbook(document.getElementById('ss'), {
@@ -10,11 +12,7 @@ sheet.setColumnWidth(1, 180);
 sheet.setColumnWidth(2, 110);
 sheet.setColumnWidth(3, 110);
 
-const rows = [
-  { name: '键盘', price: 199, qty: 2 },
-  { name: '鼠标', price: 89, qty: 3 },
-  { name: '显示器', price: 1299, qty: 1 }
-];
+const rows = createProducts();
 const fields = ['name', 'price', 'qty'];
 const headers = ['商品', '单价', '数量'];
 

@@ -1,4 +1,4 @@
-import { createTasks } from './task-data.js';
+import { createTasks } from './demo-data.js';
 import { BoardProvider, renderBoard, showTaskDetail } from './board-layout.js';
 
 const S = GC.Spread.Sheets;

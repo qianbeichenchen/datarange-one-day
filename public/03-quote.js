@@ -1,3 +1,5 @@
+import { createProducts } from './demo-data.js';
+
 // 第三课：把已学会的读写逻辑扩展成基础商品报价表。
 const S = GC.Spread.Sheets;
 const spread = new S.Workbook(document.getElementById('ss'), {
@@ -13,11 +15,7 @@ sheet.defaults.rowHeight = 30;
 sheet.setColumnWidth(1, 180);
 for (let col = 2; col <= 6; col++) sheet.setColumnWidth(col, 120);
 
-const rows = [
-  { name: '键盘', price: 199, qty: 2 },
-  { name: '鼠标', price: 89, qty: 3 },
-  { name: '显示器', price: 1299, qty: 1 }
-];
+const rows = createProducts();
 const fields = ['name', 'price', 'qty'];
 const headers = ['商品', '单价', '数量', '金额'];
 

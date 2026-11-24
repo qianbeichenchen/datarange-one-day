@@ -1,4 +1,4 @@
-import { createTasks } from './task-data.js';
+import { createTasks } from './demo-data.js';
 
 const S = GC.Spread.Sheets;
 const tools = document.getElementById('lesson-tools');

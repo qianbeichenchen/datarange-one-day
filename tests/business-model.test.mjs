@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createOrders, orderView, summarize, groupReport, numericInput, createTasks, treeProjection, cardCellAt } from '../public/business-model.js';
+import { createOrders, createTreeTasks } from '../public/demo-data.js';
+import { orderView, summarize, groupReport, numericInput, treeProjection, cardCellAt } from '../public/business-model.js';
 
 test('卡片坐标映射跨排换行，跳过间距和末排空位；布局变化映射到正确记录', () => {
   assert.deepEqual(cardCellAt(0, 0, 3, 8), { index: 0, localRow: 0, localCol: 0, field: 'name' });
@@ -50,7 +51,7 @@ test('分组行、小计、品类摘要使用同一明细口径，汇总不重�
 });
 
 test('树汇总来自全部叶子，折叠不改变汇总且保留后代折叠状态', () => {
-  const nodes = createTasks();
+  const nodes = createTreeTasks();
   const all = treeProjection(nodes);
   assert.equal(all.totals.get('P').plan, 37);
   assert.equal(all.totals.get('P').actual, 18);

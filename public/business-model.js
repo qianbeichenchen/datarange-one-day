@@ -1,17 +1,4 @@
 // 纯业务代码：不依赖 GC，可独立运行测试。先读对应课程的 Provider，再深入本文件。
-export function createOrders() {
-  return [
-    { id: 'O001', name: '键盘', region: '华东', category: '配件', price: 199, qty: 2 },
-    { id: 'O002', name: '鼠标', region: '华东', category: '配件', price: 89, qty: 3 },
-    { id: 'O003', name: '显示器', region: '华东', category: '设备', price: 1299, qty: 1 },
-    { id: 'O004', name: '键盘', region: '华南', category: '配件', price: 219, qty: 4 },
-    { id: 'O005', name: '笔记本', region: '华南', category: '设备', price: 4999, qty: 2 },
-    { id: 'O006', name: '扩展坞', region: '华北', category: '配件', price: 299, qty: 3 },
-    { id: 'O007', name: '显示器', region: '华北', category: '设备', price: 1499, qty: 2 },
-    { id: 'O008', name: '耳机', region: '华北', category: '配件', price: 159, qty: 5 }
-  ];
-}
-
 export const roundMoney = value => Math.round((value + Number.EPSILON) * 100) / 100;
 export const amount = item => roundMoney(item.price * item.qty);
 export function summarize(records) {
@@ -79,23 +66,6 @@ export function groupReport(records, region = '') {
   display.push({ kind: 'total', label: '当前范围总计', ...summarize(filtered) });
   const categories = [...bucketBy(filtered, 'category')].map(([category, items]) => ({ category, ...summarize(items) }));
   return { display, categories, total: summarize(filtered), filtered };
-}
-
-export function createTasks() {
-  return [
-    { id: 'P', parentId: null, title: '实施项目', owner: '李经理' },
-    { id: 'A', parentId: 'P', title: '需求阶段', owner: '王顾问' },
-    { id: 'A1', parentId: 'A', title: '业务访谈', owner: '小周', plan: 3, actual: 2 },
-    { id: 'A2', parentId: 'A', title: '需求说明书', owner: '小林', plan: 5, actual: 3 },
-    { id: 'B', parentId: 'P', title: '开发阶段', owner: '赵工' },
-    { id: 'B1', parentId: 'B', title: '前端开发', owner: '小陈' },
-    { id: 'B11', parentId: 'B1', title: '表格界面', owner: '小陈', plan: 8, actual: 4 },
-    { id: 'B12', parentId: 'B1', title: '数据提供者', owner: '小吴', plan: 5, actual: 2 },
-    { id: 'B2', parentId: 'B', title: '服务端接口', owner: '小郑', plan: 10, actual: 6 },
-    { id: 'C', parentId: 'P', title: '验收阶段', owner: '孙顾问' },
-    { id: 'C1', parentId: 'C', title: '回归测试', owner: '小林', plan: 4, actual: 1 },
-    { id: 'C2', parentId: 'C', title: '用户培训', owner: '小周', plan: 2, actual: 0 }
-  ];
 }
 
 export function treeProjection(nodes, collapsed = new Set()) {
