@@ -4,7 +4,7 @@
 <body>
   <a href="./?step=4">打开进阶课程</a>
   <script>
-    // 兼容旧书签，六课统一使用 /?step=1～6。
+    // 兼容旧进阶课书签，当前课程统一使用 /?step=课号。
     const scene = new URLSearchParams(location.search).get('scene') || '4';
     location.replace('./?step=' + (['4', '5', '6'].includes(scene) ? scene : '4'));
   </script>

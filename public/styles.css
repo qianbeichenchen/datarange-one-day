@@ -1,10 +1,10 @@
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; }
 body { display: grid; grid-template-columns: 220px minmax(0, 1fr); overflow: hidden; color: #243346; font: 14px "Segoe UI", "Microsoft YaHei", sans-serif; }
-.sidebar { display: flex; flex-direction: column; gap: 6px; min-height: 0; overflow-y: auto; padding: 24px 14px; border-right: 1px solid #dce3eb; background: #f8fafc; }
+.sidebar { display: flex; flex-direction: column; gap: 3px; min-height: 0; overflow-y: auto; padding: 20px 12px; border-right: 1px solid #dce3eb; background: #f8fafc; }
 .sidebar strong { font-size: 18px; padding: 0 10px 12px; }
-.menu-group { color: #7a8797; font-size: 12px; padding: 20px 10px 5px; }
-.sidebar a { color: #35516d; text-decoration: none; padding: 12px 10px; border-radius: 5px; line-height: 1.5; }
+.menu-group { color: #57677a; font-size: 12px; font-weight: 600; padding: 12px 10px 3px; }
+.sidebar a { color: #35516d; text-decoration: none; padding: 7px 10px; border-radius: 5px; line-height: 1.5; }
 .sidebar a:hover { background: #eaf0f5; }
 .sidebar a[aria-current] { color: #fff; background: #24634d; }
 main { display: flex; flex-direction: column; min-width: 0; min-height: 0; height: 100%; }
@@ -12,6 +12,7 @@ main { display: flex; flex-direction: column; min-width: 0; min-height: 0; heigh
 .lesson-controls[hidden] { display: none; }
 input, select { font: inherit; border: 1px solid #c7d2df; border-radius: 4px; padding: 7px; }
 input { width: 160px; }
+input[type="checkbox"], input[type="radio"] { width: auto; }
 .control-note { width: 100%; color: #687789; font-size: 12px; line-height: 1.5; }
 button { border: 1px solid #c7d2df; background: #fff; color: #243346; padding: 7px 10px; border-radius: 4px; cursor: pointer; font: inherit; }
 button:hover { background: #eef3f8; }
@@ -22,6 +23,7 @@ button:disabled { color: #8a94a1; cursor: default; }
   body { grid-template-columns: 165px minmax(0, 1fr); }
   .sidebar { padding: 16px 8px; }
   .sidebar strong { font-size: 15px; }
-  .sidebar a { padding: 10px 7px; font-size: 12px; }
+  .menu-group { padding-left: 7px; }
+  .sidebar a { padding: 7px; font-size: 12px; }
   .lesson-controls { padding: 8px; gap: 6px; }
 }

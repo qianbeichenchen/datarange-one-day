@@ -1,43 +1,99 @@
-# SpreadJS DataRange 一天入门
+# SpreadJS DataRange 课堂
 
-从 [一天学会 DataRange 核心用法.md](./一天学会%20DataRange%20核心用法.md) 开始，边读边运行三个独立阶段。
-
-已学完基础三课，可继续阅读 [DataRange 进阶：从订单视图到树形报表](./DataRange%20进阶：从订单视图到树形报表.md)，运行 `/?step=4` 的三个复杂业务案例。
-
-七课统一通过 `/?step=1`～`/?step=7` 访问，左侧按“基础入门 / 进阶场景”分组。源码按 `01`～`07` 编号；旧进阶链接会自动跳转到对应的新路径。
-
-第七课新增 [卡片布局教程](./07-卡片布局教程.md)：用一块 DataRange 排列多张可编辑商品卡片，学习二维坐标映射、合并标题、原生历史、两列/三列切换与筛选。
+17 个独立示例，从读取和编辑数据，到用同一份任务数据做看板、日历与甘特图。左侧目录按六个主题组织，课号、网址和 JavaScript 文件编号一致。
 
 ## 运行
 
-需要 Node.js（建议 22 或更新版本）。在本目录执行：
+需要 Node.js（建议 22 或更新版本）。在本目录执行以下命令：
 
 ```powershell
 npm install
-Copy-Item public/license.example.js public/license.js
 npm start
 ```
 
-打开 http://localhost:5186 。默认第一课；左侧按难度分组，可切换全部七课。按 F12 打开控制台。
+打开 [本地课堂](http://localhost:5186)，用左侧菜单选择课程。按 F12 打开控制台，查看工具栏“打印”按钮输出的原始记录和映射。每课独立运行，刷新会恢复该课的样例数据。
 
-| 页面 | 源码 | 学习重点 |
+依赖固定为 SpreadJS 核心包 19.2.3。需要配置授权时，将 `public/license.example.js` 复制为 `public/license.js` 并在本机填入许可。该文件由 Git 忽略。示例直接使用 JavaScript 数据，服务监听本机 `127.0.0.1:5186`。
+
+| 主题 | 课程 | 学习重点 |
 | --- | --- | --- |
-| `/?step=1` | `public/01-read.js` | getValue、add、两个坐标系 |
-| `/?step=2` | `public/02-edit.js` | 对象数组、setValue、编辑回写 |
-| `/?step=3` | `public/03-quote.js` | 计算金额、getStyle、repaint、range、增删行 |
-| `/?step=4` | `public/04-orders.js` | 排序筛选、显示映射、changes + undo 接入原生撤销/重做 |
-| `/?step=5` | `public/05-groups.js` | 地区/品类分组、合并表头、汇总、两个区域联动 |
-| `/?step=6` | `public/06-tree.js` | 多层任务树、双击展开折叠、叶子编辑向上汇总 |
-| `/?step=7` | `public/07-cards.js` | 卡片坐标映射、合并标题、编辑、原生历史、布局切换 |
+| 数据读写与区域 | [01 只读数据](./public/01-read.js)、[02 编辑回写](./public/02-edit.js)、[03 基础报价表](./public/03-quote.js) | 两套坐标、读写、样式、调整与重绘区域 |
+| 视图映射与汇总 | [04 订单视图与撤销](./public/04-orders.js)、[05 分组报表与联动](./public/05-groups.js)、[06 项目工时树](./public/06-tree.js) | 排序与筛选后的行索引、原生历史、分组和树形汇总 |
+| 字段、单元格与卡片 | [07 多单元格卡片](./public/07-cards.js)、[08 动态字段](./public/08-fields.js)、[09 自定义绘制与单格卡片](./public/09-cell-paint.js)、[10 自定义日期编辑器](./public/10-cell-editor.js) | 二维映射、列映射、单元格绘制与编辑 |
+| 表格业务交互 | [11 行内新增](./public/11-inline-add.js)、[12 组合筛选](./public/12-filter-rules.js) | 草稿生命周期、条件树、按记录写回 |
+| 看板与多视图 | [13 看板布局](./public/13-board.js)、[14 多视图共享数据](./public/14-multi-view.js)、[15 看板拖拽](./public/15-board-drag.js) | 分组卡片、视图配置、拖放更新字段 |
+| 日期与时间轴 | [16 日历与拖动改期](./public/16-calendar.js)、[17 甘特时间轴](./public/17-gantt.js) | 日期和行列互转、拖动改期、移动和拉伸任务条 |
 
-进阶案例共享的纯业务逻辑在 `public/business-model.js`，可运行 `node --test tests/business-model.test.mjs` 验证。浏览器模块统一使用 `.js`，避免部分静态服务无法识别 `.mjs` 响应类型导致白屏。`public/package.json` 仅为 Node.js 测试声明这部分源码使用 ES module，不增加依赖。本机默认入口为 http://localhost:5186/?step=4 。
+第 01～07 课可对照 [核心用法教程](./一天学会%20DataRange%20核心用法.md)、[视图与汇总教程](./DataRange%20进阶：从订单视图到树形报表.md) 和 [多单元格卡片教程](./07-卡片布局教程.md)。
 
-只依赖 SpreadJS 核心包；无后端数据服务。刷新或切换课程会重置本课数据。服务仅监听本机 127.0.0.1。
+## 第 08～17 课操作教程
 
-版本固定在 package.json / package-lock.json。首次克隆后先把 `public/license.example.js` 复制为 `public/license.js`。授权请在本机的 `public/license.js` 填入适用的许可证，该文件已被 Git 忽略；本仓库不包含许可证及 SpreadJS 专有库文件，依赖通过 npm 安装，未配置授权时受 SpreadJS 试用机制限制。
+第 08～17 课各自调用 `createTasks()` 获得一份六条任务的初始数据。读这些课时，先找到 Provider 的 `getValue`，沿行列坐标找到任务、字段或日期，再观察一次操作如何改变对应数据。
 
-业务数据保存在 JavaScript 数组中。基础版关闭撤销；教程说明自定义 undo 的扩展方式。金额是 JavaScript 计算值，不是电子表格公式。所有学习诊断信息输出至浏览器控制台。
+### 08 动态字段
 
-第四课按官方 DataRange 文档实现 `setValue(..., changes)` 与 `undo(change)`，启用 SpreadJS 原生撤销/重做，支持页面按钮和表格焦点下的 Ctrl+Z / Ctrl+Y。编辑期间保持行顺序；点击“应用视图”才重新筛选排序，并清空旧布局的历史。第五、六课不启用编辑历史。进阶案例之间的数据与历史相互独立。详见 [原生撤销重做验证](./原生撤销重做验证.md)。
+点击“交换状态与负责人”，双击换位后的负责人单元格，把负责人改为“王五”。点击“打印列映射与记录”，核对变化出现在同一条任务的 `owner` 字段。隐藏后重新显示负责人，刚才的值仍保留。
 
-第七课沿用原生 changes + undo。应用布局与筛选、新增商品、移动区域时清空旧历史；只编辑字段时保持卡片位置。
+从 `applyColumns` 开始读。它把视图的字段 ID 变成 `visibleFields`，再更新区域宽度。`getValue` 和 `setValue` 都通过 `visibleFields[col].id` 定位字段。
+
+### 09 自定义绘制与单格卡片
+
+先看“绘制状态标签”，打印一个状态单元格，原始值是字符串。切换到“绘制整张卡片”，再打印一次，原始值变成任务对象。点击卡片可查看详情，选中卡片后也可按空格打开。
+
+对照第 07 课试一次双击。第 07 课一张商品卡片占多个格子，可以直接编辑名称、单价和数量。第 09 课一个格子就是一张卡片，使用 `getStyle` 选择 CellType，再由它的 `paint` 绘制标题、状态和负责人。交互从格子坐标找到整条任务。
+
+### 10 自定义日期编辑器
+
+双击“截止日期”，修改日期并按 Enter。依次点击撤销、重做，也可以在表格有焦点时按 Ctrl+Z、Ctrl+Y。试着清空日期再提交，原值会保留。
+
+`DateCell` 的 `setEditorValue` 和 `getEditorValue` 负责传入旧值与取回输入。Provider 用 `setValue(..., changes)` 写回日期和记录旧值，`undo(change)` 按任务 ID 恢复旧值，重做由 SpreadJS 重放命令。
+
+### 11 行内新增
+
+选择新任务状态，再点击表格底部“添加记录”。输入标题但先按 Escape，打印数据确认正式记录没有新增。再添加一次，输入标题后按 Enter，观察新记录获得编号并继承刚才选择的状态。“取消草稿”也能放弃当前输入。
+
+`rebuildRows` 生成表头、正式记录及草稿或新增入口。只有 `setValue` 收到有效标题时，草稿才加入 `records`。
+
+### 12 组合筛选
+
+先应用默认条件“进行中 AND 张三”，看到 T02。勾选“或优先级为 1”并重新应用，会多出 T04。编辑 T04 的任务标题，再点击“显示全部”，核对编辑后的标题仍对应 T04。
+
+把控件值组织成 `(状态 AND 负责人) OR 优先级`，`matches` 递归判断条件节点。显示列表保存任务引用，编辑沿显示行找到源记录。
+
+### 13 看板布局
+
+选“进行中”，点击“添加任务”，再点击新增的卡片查看详情。打印数据与分组，核对新增记录的状态和所在列一致。
+
+从 `board-layout.js` 的 `BoardProvider.getValue` 读起。列号选状态分组，行号选组内记录。每个卡片格把一条任务交给 CellType 绘制。
+
+### 14 多视图共享数据
+
+在表格中双击 T01 的状态，展开下拉框，选“进行中”并按 Enter。切到看板，确认卡片在“进行中”列。给表格和看板选不同的筛选条件，来回切换确认各自保留筛选。表格的负责人列显隐也会保留。
+
+`records` 是共享数据，`views` 保存不同的筛选及列设置。`render` 按当前视图更新坐标映射和 DataRange 尺寸。只有切换本课内部视图时才共享这份记录。
+
+### 15 看板拖拽
+
+把“待开始”列的一张卡片拖到“进行中”列。打印任务状态，确认只更新了该卡片的状态。再试一次拖到原列、拖到区域外或按 Escape，记录会保持原样。
+
+按下卡片时记住任务 ID，移动时用 `sheet.hitTest` 找目标列，放开后才提交状态修改并重建分组。
+
+### 16 日历与拖动改期
+
+查看 2026 年 6 月 6 日的两条任务，切换到上个月后再切回。勾选“启用拖动改期”，把其中一条任务标签拖到 6 月 8 日，核对只有这条任务的截止日期变化。
+
+`dateAt` 将工作表行列映射到一个以周一开头的 42 天日历。`getValue` 用日期取出当天的任务，CellType 在一个日期格内绘制多条任务。拖放复用同一日期映射。
+
+### 17 甘特时间轴
+
+1. 在“查看任务条”阶段，找到 T01 对应的 6 月 1～3 日任务条。
+2. 在“整体移动”阶段，从任务条中间向右移动两天，观察起止日期都加两天、工期不变。
+3. 在“移动或拉伸端点”阶段，从深色端点拖动一端。打印日期验证只修改所拖动的一端。结束日期早于开始日期的结果会被拒绝。
+
+任务决定行，日期决定列。`dateAtColumn` 和 `columnOfDate` 提供双向映射，拖动先算列差，再决定更新哪个日期。
+
+## 验证
+
+已用 Chrome 打开全部 17 个入口并检查旧进阶入口跳转。实际验证了第 08～17 课的代表操作，包括原生撤销重做、草稿提交和取消、筛选后回写、视图间同步、拖放改期和任务条拉伸。前七课的业务模型测试共六项通过，可用 `node --test tests/business-model.test.mjs` 重跑。
+
+参考 [官方 DataRange 指南](https://demo.grapecity.com.cn/spreadjs/help/docs/features/core-concept/worksheet/worksheet-data-range) 和 [多维表格源码](https://github.com/qianbeichenchen/feishu-datarange-demo)。本课程的 GitHub 仓库为 [datarange-one-day](https://github.com/qianbeichenchen/datarange-one-day)。

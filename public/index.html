@@ -3,22 +3,36 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DataRange 课堂 · 从入门到进阶</title>
+  <title>DataRange 课堂</title>
   <link rel="stylesheet" href="/node_modules/@grapecity-software/spread-sheets/styles/gc.spread.sheets.excel2013white.css">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
   <nav class="sidebar" aria-label="课程目录">
     <strong>DataRange 课堂</strong>
-    <span class="menu-group">基础入门</span>
-    <a href="./?step=1" data-step="1">① 只读数据</a>
-    <a href="./?step=2" data-step="2">② 编辑回写</a>
-    <a href="./?step=3" data-step="3">③ 基础报价表</a>
-    <span class="menu-group">进阶场景</span>
-    <a href="./?step=4" data-step="4">④ 订单视图与撤销</a>
-    <a href="./?step=5" data-step="5">⑤ 分组报表与联动</a>
-    <a href="./?step=6" data-step="6">⑥ 项目工时树</a>
-    <a href="./?step=7" data-step="7">⑦ 商品卡片布局</a>
+    <span class="menu-group">数据读写与区域</span>
+    <a href="./?step=1" data-step="1" data-module="01-read" data-controls="basic-controls">01 只读数据</a>
+    <a href="./?step=2" data-step="2" data-module="02-edit" data-controls="basic-controls">02 编辑回写</a>
+    <a href="./?step=3" data-step="3" data-module="03-quote" data-controls="basic-controls">03 基础报价表</a>
+    <span class="menu-group">视图映射与汇总</span>
+    <a href="./?step=4" data-step="4" data-module="04-orders" data-controls="orders-controls">04 订单视图与撤销</a>
+    <a href="./?step=5" data-step="5" data-module="05-groups" data-controls="groups-controls">05 分组报表与联动</a>
+    <a href="./?step=6" data-step="6" data-module="06-tree" data-controls="tree-controls">06 项目工时树</a>
+    <span class="menu-group">字段、单元格与卡片</span>
+    <a href="./?step=7" data-step="7" data-module="07-cards" data-controls="cards-controls">07 多单元格卡片</a>
+    <a href="./?step=8" data-step="8" data-module="08-fields">08 动态字段</a>
+    <a href="./?step=9" data-step="9" data-module="09-cell-paint">09 自定义绘制与单格卡片</a>
+    <a href="./?step=10" data-step="10" data-module="10-cell-editor">10 自定义日期编辑器</a>
+    <span class="menu-group">表格业务交互</span>
+    <a href="./?step=11" data-step="11" data-module="11-inline-add">11 行内新增</a>
+    <a href="./?step=12" data-step="12" data-module="12-filter-rules">12 组合筛选</a>
+    <span class="menu-group">看板与多视图</span>
+    <a href="./?step=13" data-step="13" data-module="13-board">13 看板布局</a>
+    <a href="./?step=14" data-step="14" data-module="14-multi-view">14 多视图共享数据</a>
+    <a href="./?step=15" data-step="15" data-module="15-board-drag">15 看板拖拽</a>
+    <span class="menu-group">日期与时间轴</span>
+    <a href="./?step=16" data-step="16" data-module="16-calendar">16 日历与拖动改期</a>
+    <a href="./?step=17" data-step="17" data-module="17-gantt">17 甘特时间轴</a>
   </nav>
   <main>
   <div id="basic-controls" class="lesson-controls" hidden>
@@ -65,20 +79,21 @@
     <button id="inspect-cards">打印卡片映射</button>
     <span class="control-note">双击名称、单价、数量编辑；应用布局、筛选、新增或移动区域会清空编辑历史。</span>
   </div>
+  <div id="lesson-tools" class="lesson-controls" hidden></div>
   <div id="ss" aria-label="DataRange 课程表格"></div>
   </main>
   <script src="/node_modules/@grapecity-software/spread-sheets/dist/gc.spread.sheets.all.min.js"></script>
   <script src="./license.js" onerror="console.info('未配置本地 license.js，使用 SpreadJS 试用模式。')"></script>
   <script type="module">
     const requested = new URLSearchParams(location.search).get('step') || '1';
-    const files = { '1': './01-read.js', '2': './02-edit.js', '3': './03-quote.js', '4': './04-orders.js', '5': './05-groups.js', '6': './06-tree.js', '7': './07-cards.js' };
-    const step = Object.hasOwn(files, requested) ? requested : '1';
-    document.querySelector(`[data-step="${step}"]`).setAttribute('aria-current', 'page');
-    const controls = { '1': 'basic-controls', '2': 'basic-controls', '3': 'basic-controls', '4': 'orders-controls', '5': 'groups-controls', '6': 'tree-controls', '7': 'cards-controls' };
-    document.getElementById(controls[step]).hidden = false;
+    const links = [...document.querySelectorAll('[data-step]')];
+    const lesson = links.find(link => link.dataset.step === requested) ?? links[0];
+    lesson.setAttribute('aria-current', 'page');
+    lesson.scrollIntoView({ block: 'nearest' });
+    document.getElementById(lesson.dataset.controls ?? 'lesson-tools').hidden = false;
     // 在 Workbook 测量容器尺寸前显示工具栏，保证表格底部完整可见。
-    if (step === '3') document.getElementById('actions').hidden = false;
-    import(files[step]).catch(console.error);
+    if (lesson.dataset.step === '3') document.getElementById('actions').hidden = false;
+    import(`./${lesson.dataset.module}.js`).catch(console.error);
   </script>
 </body>
 </html>
