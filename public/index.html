@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DataRange 课堂 · 从入门到进阶</title>
+  <link rel="stylesheet" href="/node_modules/@grapecity-software/spread-sheets/styles/gc.spread.sheets.excel2013white.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <nav class="sidebar" aria-label="课程目录">
+    <strong>DataRange 课堂</strong>
+    <span class="menu-group">基础入门</span>
+    <a href="./?step=1" data-step="1">① 只读数据</a>
+    <a href="./?step=2" data-step="2">② 编辑回写</a>
+    <a href="./?step=3" data-step="3">③ 基础报价表</a>
+    <span class="menu-group">进阶场景</span>
+    <a href="./?step=4" data-step="4">④ 订单视图与撤销</a>
+    <a href="./?step=5" data-step="5">⑤ 分组报表与联动</a>
+    <a href="./?step=6" data-step="6">⑥ 项目工时树</a>
+    <a href="./?step=7" data-step="7">⑦ 商品卡片布局</a>
+  </nav>
+  <main>
+  <div id="basic-controls" class="lesson-controls" hidden>
+    <div id="actions" hidden>
+      <button id="add">添加商品</button>
+      <button id="remove">删除末行</button>
+      <button id="update">首件数量 +1</button>
+      <button id="move">移动区域</button>
+    </div>
+    <button id="inspect">打印数据到控制台</button>
+  </div>
+  <div id="orders-controls" class="lesson-controls" hidden>
+    <label>商品 <input id="keyword" type="search" placeholder="输入关键词" aria-label="商品关键词"></label>
+    <label>地区 <select id="order-region"><option value="">全部</option><option>华东</option><option>华南</option><option>华北</option></select></label>
+    <label>顺序 <select id="order-sort"><option value="id">订单号</option><option value="amount-desc">金额从高到低</option><option value="amount-asc">金额从低到高</option></select></label>
+    <button id="apply-view">应用视图</button>
+    <button id="undo-edit">撤销编辑</button>
+    <button id="redo-edit">重做编辑</button>
+    <button id="inspect-orders">打印数据与映射</button>
+    <span class="control-note">编辑保持当前顺序；应用视图重新排序、筛选并清空撤销记录。</span>
+  </div>
+  <div id="groups-controls" class="lesson-controls" hidden>
+    <label>地区 <select id="group-region"><option value="">全部</option><option>华东</option><option>华南</option><option>华北</option></select></label>
+    <button id="apply-group">应用地区</button>
+    <button id="raise-price">当前地区单价 +10%</button>
+    <button id="move-report">移动两块区域</button>
+    <button id="inspect-groups">打印明细与汇总</button>
+  </div>
+  <div id="tree-controls" class="lesson-controls" hidden>
+    <button id="collapse-tree">折叠全部</button>
+    <button id="expand-tree">展开全部</button>
+    <button id="move-tree">移动树形区域</button>
+    <button id="inspect-tree">打印节点与显示映射</button>
+  </div>
+  <div id="cards-controls" class="lesson-controls" hidden>
+    <label>每行卡片 <select id="cards-per-row"><option value="2">2 张</option><option value="3" selected>3 张</option></select></label>
+    <label>品类 <select id="card-category"><option value="">全部</option><option>配件</option><option>设备</option></select></label>
+    <label>商品 <input id="card-keyword" type="search" placeholder="输入关键词" aria-label="卡片商品关键词"></label>
+    <button id="apply-cards">应用布局与筛选</button>
+    <button id="add-card">添加商品</button>
+    <button id="undo-card">撤销编辑</button>
+    <button id="redo-card">重做编辑</button>
+    <button id="move-cards">移动区域</button>
+    <button id="inspect-cards">打印卡片映射</button>
+    <span class="control-note">双击名称、单价、数量编辑；应用布局、筛选、新增或移动区域会清空编辑历史。</span>
+  </div>
+  <div id="ss" aria-label="DataRange 课程表格"></div>
+  </main>
+  <script src="/node_modules/@grapecity-software/spread-sheets/dist/gc.spread.sheets.all.min.js"></script>
+  <script src="./license.js" onerror="console.info('未配置本地 license.js，使用 SpreadJS 试用模式。')"></script>
+  <script type="module">
+    const requested = new URLSearchParams(location.search).get('step') || '1';
+    const files = { '1': './01-read.js', '2': './02-edit.js', '3': './03-quote.js', '4': './04-orders.js', '5': './05-groups.js', '6': './06-tree.js', '7': './07-cards.js' };
+    const step = Object.hasOwn(files, requested) ? requested : '1';
+    document.querySelector(`[data-step="${step}"]`).setAttribute('aria-current', 'page');
+    const controls = { '1': 'basic-controls', '2': 'basic-controls', '3': 'basic-controls', '4': 'orders-controls', '5': 'groups-controls', '6': 'tree-controls', '7': 'cards-controls' };
+    document.getElementById(controls[step]).hidden = false;
+    // 在 Workbook 测量容器尺寸前显示工具栏，保证表格底部完整可见。
+    if (step === '3') document.getElementById('actions').hidden = false;
+    import(files[step]).catch(console.error);
+  </script>
+</body>
+</html>

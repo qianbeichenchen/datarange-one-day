@@ -1,0 +1,480 @@
+# 一天学会 SpreadJS DataRange 核心用法
+
+我们用一张商品报价表，走完“显示数据 → 编辑回写 → 计算和样式 → 动态调整区域”的完整过程。一天的目标是：你能不照抄，把自己的对象数组显示出来，编辑后改回数组，并能解释每一行核心代码。
+
+前置知识只需要 JavaScript 的数组、对象、函数和 class。示例使用原生 JavaScript、SpreadJS 19.2.3 核心包；不需要先学框架或数据管理器。
+
+## 0. 先运行，再读代码（20 分钟）
+
+在 `datarange-one-day` 目录打开终端：
+
+```powershell
+npm install
+npm start
+```
+
+打开 [学习 demo](http://localhost:5186)。项目已经安装过依赖时，直接 `npm start` 即可。按 F12 打开开发者工具，选择 Console。如果端口被占用，在 PowerShell 中设置 `$env:PORT=5187` 再运行，页面地址相应改为 5187。
+
+左侧“基础入门”分组包含三个阶段，每课代码独立。切换课程或刷新会恢复本课的初始数据。先按 ①、②、③ 的顺序学，不要一开始读完整的第三课。
+
+| 阶段 | 打开页面 | 核心源码 |
+| --- | --- | --- |
+| 第一课：只读数据 | [step=1](http://localhost:5186/?step=1) | `public/01-read.js` |
+| 第二课：编辑回写 | [step=2](http://localhost:5186/?step=2) | `public/02-edit.js` |
+| 第三课：基础报价表 | [step=3](http://localhost:5186/?step=3) | `public/03-quote.js` |
+
+`server.js` 只负责发送本地文件。学习时集中看这三个 JS 文件。`public/license.js` 是授权配置位置；项目没有附带授权，未配置时会出现 SpreadJS 自身的试用提示或限制。
+
+## 1. 建立概念：DataRange 到底负责什么（30 分钟）
+
+想象你已经有一个业务数组：
+
+```js
+const rows = [
+  { name: '键盘', price: 199, qty: 2 },
+  { name: '鼠标', price: 89, qty: 3 }
+];
+```
+
+你希望把它放在普通工作表的 B3 附近，并让用户直接编辑。DataRange 负责把工作表中的一块区域连接到你的数据提供者。数据提供者决定“这个格子显示什么”“编辑后改到哪里”“应该是什么样式”。
+
+```text
+业务数组 rows ← 编辑回写 setValue ← 数据提供者 ← DataRange ← 用户编辑
+业务数组 rows → 读取 getValue     → 数据提供者 → DataRange → 工作表显示
+```
+
+读数据时，SpreadJS 调用 `getValue`；写数据时调用 `setValue`。你实现的是供 SpreadJS 调用的接口。`IDataProvider` 是接口名称，原生 JavaScript 可以直接使用对象或 class，不必继承某个基类。
+
+| 对象 / 方法 | 你先记住的职责 |
+| --- | --- |
+| `Workbook` | 整个工作簿，挂载在网页容器上 |
+| `Worksheet` | 普通工作表，是区域的宿主 |
+| `sheet.dataRanges` | 这张工作表的数据区域管理器 |
+| `dataRanges.add(...)` | 注册“名称 + 提供者 + 位置和大小” |
+| `provider.getValue(row, col)` | 用区域内部坐标提供显示值 |
+| `provider.setValue(row, col, value)` | 将编辑值写回业务对象 |
+| `provider.getStyle(row, col)` | 提供样式和单元格是否锁定 |
+| `dataRange.repaint()` | 让区域重新绘制 |
+| `dataRange.range(...)` | 读取或修改区域位置、大小 |
+
+普通 `sheet.getRange(...)` 返回单元格范围对象，常用来批量设格式；这里学的是 `sheet.dataRanges.add(...)` 创建的数据区域。它有自己的数据提供者。
+
+**自测：** 如果只是往 A1 写一句话，用 `sheet.setValue` 就能完成。什么时候值得用 DataRange？当一整块区域的值、样式和编辑回写需要由自己的业务数据结构控制时。
+
+## 2. 第一课：用最少的逻辑显示数据（45 分钟）
+
+打开第一课，阅读 `public/01-read.js`。先忽略列宽和控制台按钮，核心只有下面三段。
+
+### 2.1 准备一个二维数组
+
+```js
+const rows = [
+  ['商品', '单价', '数量'],
+  ['键盘', 199, 2],
+  ['鼠标', 89, 3],
+  ['显示器', 1299, 1]
+];
+```
+
+第一行是你自己定义的表头。DataRange 不会凭空为自定义提供者创建这行内容，因此区域总高度是 4 行。
+
+### 2.2 提供 getValue
+
+```js
+const provider = {
+  getValue(row, col) {
+    return rows[row]?.[col] ?? null;
+  }
+};
+```
+
+当 SpreadJS 要绘制区域内的某个格子时，会询问这个方法。返回 `null` 表示此处由提供者提供空值；返回 `undefined` 则表示取不到，SpreadJS 会继续尝试工作表模型里的值。`??` 只处理 null / undefined，不会把数字 0 当成空值。
+
+`getValue` 可能被频繁调用。这里应该直接返回已准备的数据，不要在方法里请求接口、修改数组、打印每一个格子，或做昂贵的全表计算。
+
+### 2.3 注册区域
+
+```js
+const dataRange = sheet.dataRanges.add(
+  'products',
+  provider,
+  new GC.Spread.Sheets.Range(2, 1, rows.length, 3)
+);
+```
+
+四个数字依次是：起始行索引、起始列索引、行数、列数。**它们不是起点和终点坐标。** 行列索引从 0 开始，所以 `(2, 1)` 是 B3。这里覆盖 B3:D6。
+
+### 2.4 分清两个坐标系
+
+| 屏幕格子 | 工作表坐标 | 提供者收到的区域坐标 | 数组内容 |
+| --- | --- | --- | --- |
+| B3 | `(2, 1)` | `(0, 0)` | 商品 |
+| C3 | `(2, 2)` | `(0, 1)` | 单价 |
+| B4 | `(3, 1)` | `(1, 0)` | 键盘 |
+| C4 | `(3, 2)` | `(1, 1)` | 199 |
+
+换算关系：`工作表坐标 = 区域起点 + 区域内部坐标`。SpreadJS 会把坐标转换好，再调用你的提供者。不要在 `getValue` 里面再次减去起始行 2、起始列 1。
+
+在第一课 Console 中运行：
+
+```js
+demo.provider.getValue(1, 0) // '键盘'
+demo.dataRange.range()     // row: 2, col: 1, rowCount: 4, colCount: 3
+```
+
+`demo` 是项目专门暴露的实验入口，包含 rows、sheet、provider 等对象，不是 SpreadJS 自带的 API。
+
+**练习 A：** 把第一课的起点从 `(2, 1)` 改为 `(5, 3)`，保存后刷新。预期表头出现在 D6，`getValue(1, 0)` 仍返回“键盘”。做完把代码改回来。
+
+**过关标准：** 你能解释为什么 C4 对应提供者的 `(1, 1)`，并能把表格放到任意位置。
+
+## 3. 第二课：编辑后，修改真正的业务数据（60 分钟）
+
+打开第二课。双击 C4，把键盘单价 199 改成 299，按 Enter，再点击“打印数据到控制台”。查看 `console.table` 输出，第一条对象的 `price` 应变成 299。
+
+### 3.1 从二维数组换成对象数组
+
+```js
+const rows = [
+  { name: '键盘', price: 199, qty: 2 },
+  { name: '鼠标', price: 89, qty: 3 },
+  { name: '显示器', price: 1299, qty: 1 }
+];
+const fields = ['name', 'price', 'qty'];
+const headers = ['商品', '单价', '数量'];
+```
+
+对象数组适合业务代码，但工作表按“第几列”取值。`fields[col]` 就是从列号到字段名的映射。比如 `col=1` 对应 `price`。
+
+```js
+getValue(row, col) {
+  if (row === 0) return headers[col] ?? null;
+  return rows[row - 1]?.[fields[col]] ?? null;
+}
+```
+
+此时表头不在 `rows` 内，所以要减 1：区域第 1 行显示 `rows[0]`，区域第 2 行显示 `rows[1]`。区域总高度要使用 `rows.length + 1`。
+
+### 3.2 写回的核心
+
+下面是理解思路的简化片段；可运行文件里还包含边界检查与数值转换。
+
+```js
+setValue(row, col, value) {
+  if (row === 0) return true;
+  rows[row - 1][fields[col]] = value;
+  return true;
+}
+```
+
+完整调用过程是：
+
+1. 用户编辑 C4，输入 299。
+2. SpreadJS 把工作表 `(3, 2)` 转为区域 `(1, 1)`。
+3. 提供者收到 `setValue(1, 1, 299, changes)`。
+4. `row - 1` 等于 0，`fields[1]` 等于 `'price'`。
+5. 写回 `rows[0].price`，并返回 `true`。
+
+**返回值要特别记住：** `true` 表示提供者已经处理这次写入，不再写入工作表模型。`false` 或未处理会让写入继续交给工作表模型。它不是传统校验函数中的“false 代表输入无效”。
+
+因此示例遇到非法输入时保留原数据、打印原因并返回 `true`，表示消费这次请求。第二课要求单价、数量为非负数；第三课会进一步要求数量必须是整数。
+
+### 3.3 让表头只读、数据行可编辑
+
+```js
+sheet.options.isProtected = true;
+
+// provider 的方法
+getStyle(row) {
+  const style = new GC.Spread.Sheets.Style();
+  style.locked = row === 0;
+  return style;
+}
+```
+
+保护工作表后，`locked: true` 的格子不能被用户编辑，`locked: false` 的数据格仍可编辑。仅仅不给提供者写 `setValue`，并不等于禁止编辑。
+
+这是界面层的保护。程序里仍应做边界检查，真实业务的权限和数据有效性还应由服务端验证。
+
+**练习 B：** 先把 C4 改为 299，观察对象；再输入 -1，预期数值仍为 299，Console 提示输入要求。最后修改 B4 的商品名称，观察 `rows[0].name`。
+
+**过关标准：** 你能独立写出 `getValue` 和 `setValue`，并解释表头为什么要减一行。
+
+## 4. 第三课：一个够用的基础报价表（60 分钟）
+
+打开第三课，阅读 `public/03-quote.js`。还是相同的三个对象，只增加一列“金额”。初始预期结果：
+
+| 商品 | 单价 | 数量 | 金额 |
+| --- | ---: | ---: | ---: |
+| 键盘 | 199.00 | 2 | 398.00 |
+| 鼠标 | 89.00 | 3 | 267.00 |
+| 显示器 | 1299.00 | 1 | 1299.00 |
+
+### 4.1 计算列不一定要存进数组
+
+```js
+if (col === 3) {
+  return Math.round(item.price * item.qty * 100) / 100;
+}
+```
+
+金额由单价和数量派生，保持一个事实来源更容易维护。示例在 `getValue` 里做简单乘法；它是 JavaScript 计算值，不是 `sheet.setFormula` 创建的电子表格公式，也不自动建立公式依赖关系。
+
+金额保留两位小数用于教学展示。正式财务业务请另行确定金额精度和舍入策略，例如用整数分或十进制定点计算。
+
+### 4.2 样式也由提供者决定
+
+```js
+getStyle(row, col) {
+  const style = new GC.Spread.Sheets.Style();
+  style.locked = row === 0 || col === 3;
+  // 完整代码继续区分表头、交替行背景、数字格式。
+  return style;
+}
+```
+
+完整代码把表头涂成绿色，金额和单价格式设为 `0.00`，金额达到 1000 时高亮。这里的高亮是在 `getStyle` 中按当前值计算的样式规则；没有另行注册工作表条件格式规则。
+
+`formatter = '0.00'` 只改变显示格式，不会把业务数组的数字改成字符串。
+
+### 4.3 编辑价格后，金额为什么立即变了
+
+第三课在写回完成后执行：
+
+```js
+queueMicrotask(() => this.host.repaint());
+```
+
+`host` 是 SpreadJS 注入到提供者上的 DataRange 实例。把重绘安排到微任务，等当前写入调用完成后，再读取最新数据绘制整块区域。这让同一行的金额与高亮也能更新。
+
+**练习 C：** 把键盘数量从 2 改为 6，金额应变为 1194.00，且金额格出现高亮。尝试编辑金额或表头，界面应保持只读。把数量输入成 1.5，原来的整数数量应保留。
+
+### 4.4 固定表头
+
+```js
+sheet.dataRanges.add('products', provider, range, {
+  sticky: { top: 1 }
+});
+```
+
+这里的第 0 行是自定义表头，`top: 1` 将它作为区域顶部固定行。它的效果需要在区域足够长、发生工作表纵向滚动时观察。添加十几条商品后滚动；区域已完全离开可视范围时，不应期待它像网页导航一样永久固定。
+
+**过关标准：** 你能增加一个简单的派生列，并且知道样式、锁定和重绘各自负责什么。
+
+## 5. 动态更新：改值、增删行、移动位置（45 分钟）
+
+第三课的四个按钮分别对应四种很常见的需求。
+
+### 5.1 外部修改：先改业务数据，再 repaint
+
+```js
+demo.rows[0].qty += 1;
+demo.dataRange.repaint();
+```
+
+这就是“首件数量 +1”按钮的逻辑。直接改对象不会经过提供者的 `setValue`，所以调用方应主动重绘。`repaint()` 不会请求接口，也不会自动保存数据；它只是触发绘制。
+
+### 5.2 新增：数组变长，区域也要变高
+
+```js
+rows.push({ name: '新商品', price: 100, qty: 1 });
+const old = dataRange.range();
+dataRange.range(new GC.Spread.Sheets.Range(
+  old.row, old.col, rows.length + 1, headers.length
+));
+dataRange.repaint();
+```
+
+只 `push` 不调整区域大小，新对象可能在区域边界之外，不会显示。这里同时保留当前起点，因此移动区域后再新增也能正确扩展。
+
+如果不断添加到工作表边界之外，还要扩充宿主工作表行数。这份入门示例只用于少量记录。
+
+### 5.3 删除：缩小区域，保留表头
+
+```js
+rows.pop();
+// 然后使用同一套 resizeDataRange() 逻辑
+```
+
+即使删到 0 条数据，总行数也仍是 `0 + 1`。项目提供的是“删除末行”；尚未实现按选中行删除。
+
+按钮修改数组与区域尺寸，没有调用 `sheet.addRows` 或 `sheet.deleteRows`。如果以后开放工作表原生插行、删行，需要在提供者里进一步实现 `onRowChange`，明确业务数组如何响应。
+
+### 5.4 移动：只换起点
+
+```js
+const old = dataRange.range();
+dataRange.range(new GC.Spread.Sheets.Range(
+  5, 3, old.rowCount, old.colCount
+));
+dataRange.repaint();
+```
+
+按钮会让区域在 B3 和 D6 之间来回切换。`rows` 没变，提供者内部的 `(0, 0)` 仍然是表头。现在再看第一课的两个坐标系，你应该能解释为什么移动不需要改写提供者。
+
+| 数据发生了什么变化 | 应做什么 |
+| --- | --- |
+| 外部改某个对象的值 | 改对象，再 `repaint()` |
+| 记录条数改变 | 改数组，再调整 `range` 的行数，再重绘 |
+| 展示列数改变 | 更新字段映射和取值逻辑，再调整 `range` 的列数 |
+| 放到别的位置 | 调整 `range` 起点，保留行列数 |
+| 从远端重新获取数据 | 在接口成功后更新提供者的数据，再调整大小并重绘 |
+
+## 6. 区域管理与常见错误（30 分钟）
+
+Console 可以直接尝试：
+
+```js
+demo.sheet.dataRanges.get('products') // 按名字找
+demo.sheet.dataRanges.all()           // 这张表的全部区域
+```
+
+如果要练习移除，最后再执行下面任一条，随后刷新恢复：
+
+```js
+demo.sheet.dataRanges.remove('products');
+// 或：demo.sheet.dataRanges.clear();
+```
+
+移除区域与清空业务数组是两个动作。不要因为画面消失就认为 `rows` 已被清空，也不要继续使用已被移除的旧实例操作区域。
+
+| 现象 | 优先检查 |
+| --- | --- |
+| 页面只有工具栏，没有表格 | 核心 JS / CSS 请求是否成功；`#ss` 有没有高度；Console 是否有授权或加载错误 |
+| 表头或数据整体错一行 | 表头是否在数组内；对象数组是否做了 `row - 1`；总高度是否加了表头 |
+| 表格换到其他位置就乱了 | 是否错误地在提供者里又减去工作表起点 |
+| 数组已改，画面没变 | 是否调用了 `repaint()` |
+| 新增数据看不到 | 区域行数是否同步增长，宿主工作表是否容得下 |
+| 点击数字不能编辑 | `isProtected` 和提供者返回的 `style.locked` 是否匹配 |
+| 设置 locked 后仍能编辑 | 是否启用了工作表保护；程序写值与用户编辑不是同一层限制 |
+| 校验返回 false，却出现奇怪结果 | `setValue(false)` 会继续写入工作表模型，不是拒绝输入 |
+| Ctrl+Z 没效果 | 基础项目明确关闭撤销；自定义数据需要实现变化记录与 undo |
+| 刷新或切课后改动丢失 | 示例数据仅存在内存；需后续增加存储 |
+
+同一工作表上的数据区域名称要唯一，多个区域不能相交。学习期间用显式行列数，不要把别的提供者示例中的自动尺寸行为直接套到自定义数组上。
+
+## 7. 独立作业：不看实现再做一遍（60 分钟）
+
+先完成以下五项，再对照参考思路。能完成前四项，就已抓住这份教程的核心。
+
+1. 给报价表增加一列“库存”，金额列仍只读。
+2. 库存低于 5 时，用红色文字显示库存。
+3. 新增商品时，为库存设置初始值 10。
+4. 把区域起点固定改为 E8，验证编辑、外部更新、新增仍正确。
+5. 点击按钮加载一批新的本地模拟数据，并让提供者、Console、区域尺寸保持一致。
+
+### 参考思路：先自己做，再看
+
+库存列放到金额列前面时，字段与列号要一起更新：
+
+```js
+const fields = ['name', 'price', 'qty', 'stock'];
+const headers = ['商品', '单价', '数量', '库存', '金额'];
+```
+
+为每条对象加上 `stock`。金额计算的 `col === 3` 改成 `col === 4`；锁定金额的判断同步改成 `col === 4`；可写字段扩展到 `0..3`；校验数量和库存都应为非负整数。金额格式和高亮的列号也要同步更新。区域宽度继续使用 `headers.length`，就会自然扩为 5 列。
+
+在 `getStyle` 中增加：
+
+```js
+if (row > 0 && col === 3 && this.rows[row - 1].stock < 5) {
+  style.foreColor = '#c73535';
+}
+```
+
+新增按钮中加入 `stock: 10`。E8 对应零基坐标 `(7, 4)`；如果保留“移动区域”按钮，也要同步调整它的目标位置。
+
+加载另一批数据时，现有第三课的按钮闭包仍引用原来的 `rows`，所以可以就地替换内容，保持同一个数组身份：
+
+```js
+const nextRows = [
+  { name: '耳机', price: 159, qty: 2 },
+  { name: '支架', price: 69, qty: 1 }
+];
+demo.rows.splice(0, demo.rows.length, ...nextRows);
+const old = demo.dataRange.range();
+demo.dataRange.range(new GC.Spread.Sheets.Range(
+  old.row, old.col, demo.rows.length + 1, old.colCount
+));
+demo.dataRange.repaint();
+```
+
+上面加载片段适用于未加库存的原版第三课；完成库存作业后，请给新对象也补上 `stock`。如果选择直接替换 `provider.rows`，则还必须修改所有操作数据的按钮，让它们统一读取 `provider.rows`，避免一部分代码仍指向旧数组。
+
+## 8. 学完后怎么逐步加功能（选学，不计入第一天必学）
+
+建议每次只加一项，先确认它对应的业务数据变化，再决定要补哪个钩子。
+
+| 顺序 | 新功能 | 需要补的知识 |
+| --- | --- | --- |
+| 1 | 保存到浏览器本地，刷新恢复 | 保存业务数组；加载后调整区域尺寸与重绘 |
+| 2 | 按选中行删除 | 工作表选中行转换为区域数据行；保护表头和边界 |
+| 3 | 撤销编辑 | `setValue` 的 `changes` 参数与 `undo(change)` |
+| 4 | 排序 / 筛选 | 排序或筛选自己的数据；显示索引与记录身份分开 |
+| 5 | 对接接口 | 在提供者外获取数据，加载状态、失败处理、保存策略 |
+| 6 | 原生插删行 / 复制粘贴 | `onRowChange`、`onClear`、`onCopy` 及结构变化记录 |
+| 7 | 保存工作簿、导入导出 | 自定义提供者序列化、全局注册、对应 I/O 插件 |
+
+### 撤销为什么要单独做
+
+SpreadJS 不知道你的业务数组应该如何恢复。因此，官方提供了记录 changes 并实现 undo 的机制。下面是一个只说明“单元格编辑撤销”的结构片段，不能直接替换完整版的校验逻辑：
+
+```js
+setValue(row, col, value, changes) {
+  if (row === 0 || !this.rows[row - 1] || !fields[col]) return true;
+  const item = this.rows[row - 1];
+  const field = fields[col];
+  // 实际接入时先验证并规范化 value，再记录与写入。
+  changes?.push({ type: 'value', item, field, oldValue: item[field] });
+  item[field] = value;
+  queueMicrotask(() => this.host.repaint());
+  return true;
+}
+
+undo(change) {
+  if (change.type !== 'value') return;
+  change.item[change.field] = change.oldValue;
+  queueMicrotask(() => this.host.repaint());
+}
+```
+
+这个片段需放入提供者类中，并启用工作簿撤销。新增、删除、移动按钮直接改数组 / 尺寸，不会自动进入同一撤销链；正式支持前，应为它们设计命令和变化记录，或在结构变化时清理编辑历史。本教程的可运行基础版保持 `allowUndo: false`，避免给人“只要打开开关就全部可撤销”的错觉。
+
+排序、筛选也要自己设计。自定义 DataRange 不会自动把业务数组变成带完整排序、筛选、远端 CRUD 的数据表。若以后需要 TableSheet 作为提供者，那是另一条扩展路线，应单独学习其数据模型。
+
+Excel 没有自定义 DataRange 的运行机制。导出成 Excel 时会成为普通单元格的值和样式，不能期待 Excel 里继续执行你的 JavaScript 提供者。若要在 SpreadJS 中恢复自定义提供者，需要按官方要求处理 `typeName`、全局类注册，以及 `toJSON` / `fromJSON`。
+
+## 9. 一天安排与最终验收
+
+| 时间段 | 做什么 | 验收产出 |
+| --- | --- | --- |
+| 09:00–09:50 | 运行项目、读概念 | 能说清 provider 的职责 |
+| 10:00–10:45 | 第一课和练习 A | 能解释坐标并移动表格 |
+| 11:00–12:00 | 第二课和练习 B | 能看到编辑写回对象数组 |
+| 13:30–14:30 | 第三课和练习 C | 能解释计算值、样式和重绘 |
+| 14:40–15:25 | 动态更新按钮 | 能区分 repaint 和 range |
+| 15:35–16:05 | 排错、区域管理 | 能独立排查错位、尺寸和编辑问题 |
+| 16:15–17:15 | 不照抄完成库存作业 | 有一张自己修改过的报价表 |
+
+最后合上教程，用自己的话回答：
+
+- `new Range(2, 1, 4, 3)` 的四个数字分别表示什么？
+- 为什么工作表里的 C4，在提供者里是 `(1, 1)`？
+- 为什么对象数组的第一个商品对应 `row - 1`？
+- `setValue` 返回 true 表示什么？
+- 改完数组中的单价，要怎么让画面更新？数组增加一条又要多做哪一步？
+- 金额列为什么只读？它是 JavaScript 计算值还是电子表格公式？
+
+这些问题都能解释清楚，并能完成库存作业，就达到了第一天的目标。后续再逐项增加存储、筛选和撤销。
+
+## 官方参考与核验范围
+
+本项目通过 SpreadJS MCP 的 overview、search、fetch 核验了数据区域概念、坐标语义、读写钩子、host、样式、sticky、区域大小和序列化注意事项。npm 官方仓库核实并固定版本为 19.2.3。
+
+- [数据区域概念与完整用法](https://demo.grapecity.com.cn/spreadjs/help/docs/features/core-concept/worksheet/worksheet-data-range)
+- [IDataProvider 接口](https://demo.grapecity.com.cn/spreadjs/help/api/interfaces/GC.Spread.Sheets.DataRange.IDataProvider)
+- [DataRange API](https://demo.grapecity.com.cn/spreadjs/help/api/classes/GC.Spread.Sheets.DataRange.DataRange)
+- [DataRangeManager API](https://demo.grapecity.com.cn/spreadjs/help/api/classes/GC.Spread.Sheets.DataRange.DataRangeManager)
+- [官方基础示例](https://demo.grapecity.com.cn/spreadjs/SpreadJSTutorial/features/data-range/basic)
+
+浏览器实测记录见项目内的 `验证记录.md`。选学撤销片段和库存作业参考是扩展讲解，不属于基础 demo 已实现功能。

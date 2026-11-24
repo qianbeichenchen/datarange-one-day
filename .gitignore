@@ -1,0 +1,16 @@
+node_modules/
+.npm-cache/
+.tools/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+# 真实授权请配置在本机文件中，禁止提交。
+public/license.js
